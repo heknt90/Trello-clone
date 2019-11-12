@@ -25,8 +25,8 @@ const Column = {
         });
         columnHeader.addEventListener('blur', event => {
             columnHeader.removeAttribute('conteneditable');
-        });
-     
+        });  
+    
         columnElement.addEventListener('dragstart', Column.dragstart);
         columnElement.addEventListener('dragend', Column.dragend);
         columnElement.addEventListener('dragenter', Column.dragenter);
