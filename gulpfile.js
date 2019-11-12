@@ -58,9 +58,9 @@ gulp.task('js', function(cb) {
   pump([
         gulp.src('source/js/*.js'),
         gulp.dest('build/js'),
-        uglify(),
-        rename('script.min.js'),
-        gulp.dest('build/js'),
+        // uglify(),
+        // rename('script.min.js'),
+        // gulp.dest('build/js'),
         server.stream()
     ],
     cb
