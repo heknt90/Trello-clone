@@ -33,13 +33,6 @@ const Note = {
         
         // event.stopPropagation();
     },
-
-    dragstart (event) {
-        Note.dragged = this;
-        this.classList.add('dragged');
-        
-        // event.stopPropagation();
-    },
     
     dragend (event) {
         Note.dragged = null;
@@ -51,24 +44,24 @@ const Note = {
     },
     
     dragenter (event) {
-        if (this === Note.dragged) return;
+        if (this === Note.dragged || !Note.dragged) return;
         this.classList.add('under');
     },
     
     dragover (event) {
         event.preventDefault();
-        if (this === Note.dragged) return;
+        if (this === Note.dragged || !Note.dragged) return;
         
     },
     
     dragleave (event) {
-        if (this === Note.dragged) return;
+        if (this === Note.dragged || !Note.dragged) return;
         this.classList.remove('under');
     },
     
     drop(event) {
         event.stopPropagation();
-        if (this === Note.dragged) return;
+        if (this === Note.dragged || !Note.dragged) return;
     
         if (this.parentElement === Note.dragged.parentElement) {
             let note = Array.from(this.parentElement.querySelectorAll('.note'));
