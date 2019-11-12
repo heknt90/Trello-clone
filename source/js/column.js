@@ -36,36 +36,36 @@ const Column = {
     },
     
 
-    dragstart(event) {
-        if(!Column.dragged) return;
-        Column.dragged = this;
-        this.classList.add('dragged');
-        console.log(Column.dragged);
-    },
+    // dragstart(event) {
+    //     if(!Column.dragged) return;
+    //     Column.dragged = this;
+    //     this.classList.add('dragged');
+    //     console.log(Column.dragged);
+    // },
 
-    dragend(event) {
-        Column.dragged = null;
-        this.classList.remove('dragged');
-    },
+    // dragend(event) {
+    //     Column.dragged = null;
+    //     this.classList.remove('dragged');
+    // },
 
-    dragenter (event) {
-        if (this === Column.dragged) return;
-        this.classList.add('under');
-    },
+    // dragenter (event) {
+    //     if (this === Column.dragged) return;
+    //     this.classList.add('under');
+    // },
 
     dragover(event) {
-        if(this === Column.dragged || !Column.dragged) return;
-        console.log(this === Column.dragged);
+        // if(this === Column.dragged || !Column.dragged) return;
+        // console.log(this === Column.dragged);
         event.preventDefault();
     },
 
     dragleave (event) {
-        if ( this.closest('.column') === Column.dragged || Column.dragged ) return;
+        // if ( this.closest('.column') === Column.dragged || Column.dragged ) return;
         this.classList.remove('under');
     },
     
     drop(event) {
-        if (this === Column.dragged || !Column.dragged) return;
+        // if (this === Column.dragged || !Column.dragged) return;
         if (Note.dragged) {
             return this.querySelector('[data-notes]').append(Note.dragged);
         }
