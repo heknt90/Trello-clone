@@ -1,31 +1,29 @@
 'use strict';
 
+// По сути в логике приложения работают 2 сущности: Колонка и Запись.
+// И то и другое можно переставлять местами, переименовывать (редактировать)
+// Кроме того, записи можно перемещать из одной колонки в другую
+// Далее, нужно будет сделать перемещение курсора в конец текста при начале редактирования
+// Использовать автоматически редактирование при создании новой колонки (редактировать название колонки)
+// и при создании новой записи (редактировать текст записи)
+
+// Позже должен добавиться какой-то новый функционал 
+// - (иконка корзины, добавляющая возможность удаления элементов: колонок и (или) записей)
+
+
+// Композиция действий с колонками
 document
-.querySelectorAll('.column')
-.forEach(Column.process);
-
-document
-    .querySelector('[data-action-addColumn]')
-    .addEventListener('click', event => {
-
-        let columnElement = document.createElement('div');
-        columnElement.classList.add('column');
-        columnElement.setAttribute('draggable', 'true');
-        columnElement.dataset.columnId = Column.idCounter++;
-
-        columnElement.innerHTML = `<p class="column-header" contenteditable="true">В плане</p>
-                                    <div data-notes></div>
-                                    <p class="column-footer">
-                                        <span data-action-addNote class="action">+ Добавить карточку</span>
-                                    </p>`;
-
-        document.querySelector('.columns').append(columnElement);
-        Column.process(columnElement);
+    .querySelectorAll('.column')
+    .forEach((item) => {
+        Column.init(item);
     });
 
+// Композиция обработчиков записи
 document
     .querySelectorAll('.note')
-    .forEach(Note.process);
+    .forEach((item) => {
+        Note.init(item);
+    });
 
 
 

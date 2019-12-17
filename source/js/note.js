@@ -1,83 +1,74 @@
-const Note = {
-    idCounter:  8,
-    dragged: null,
+'use strict';
 
-    process(noteElement) {
-        noteElement.addEventListener('dblclick', event => {
-            noteElement.setAttribute('contenteditable', 'true');
-            noteElement.removeAttribute('draggable');
-            noteElement.closest('.column').removeAttribute('draggable');
-            noteElement.focus();
-        });
-    
-        noteElement.addEventListener('blur', event => {
-            noteElement.removeAttribute('contenteditable');
-            noteElement.setAttribute('draggable', 'true');
-            noteElement.closest('.column').setAttribute('draggable', 'true');
-            if(!noteElement.textContent.trim().length) {
-                noteElement.remove();
-            }
-        });
-    
-        noteElement.addEventListener('dragstart', Note.dragstart);
-        noteElement.addEventListener('dragend', Note.dragend);
-        noteElement.addEventListener('dragenter', Note.dragenter);
-        noteElement.addEventListener('dragover', Note.dragover);
-        noteElement.addEventListener('dragleave', Note.dragleave);
-        noteElement.addEventListener('drop', Note.drop);
-    },
+class Note {
+    constructor(id = Note.nextId++, content = 'Какой-то текст', parentId) {
+        
+        this.id = id;
+        
+        if( !parentId) {
+            parentId = 1;      
+        }
+        
+        let instance = this;
 
-    dragstart (event) {
-        Note.dragged = this;
-        this.classList.add('dragged');
+        let note = this.template(id, content);
+        let node = this.render(parentId, note);
+        this.onDblClick = this.onDblClick.bind(this); 
+        this.onBlur = this.onBlur.bind(this); 
+
+        node.innerHTML = "Другой текст";
+        node.onclick = this.onDblClick;
+
+        console.log(node);
         
-        // event.stopPropagation();
-    },
-    
-    dragend (event) {
-        Note.dragged = null;
-        this.classList.remove('dragged');
-    
-        document
-            .querySelectorAll('.note')
-            .forEach(x => x.classList.remove('under'));
-    },
-    
-    dragenter (event) {
-        if (this === Note.dragged || !Note.dragged) return;
-        this.classList.add('under');
-    },
-    
-    dragover (event) {
-        event.preventDefault();
-        if (this === Note.dragged || !Note.dragged) return;
         
-    },
-    
-    dragleave (event) {
-        if (this === Note.dragged || !Note.dragged) return;
-        this.classList.remove('under');
-    },
-    
-    drop(event) {
-        event.stopPropagation();
-        if (this === Note.dragged || !Note.dragged) return;
-    
-        if (this.parentElement === Note.dragged.parentElement) {
-            let note = Array.from(this.parentElement.querySelectorAll('.note'));
-            let indexA = note.indexOf(Note.dragged);
-            let indexB = note.indexOf(this);
-            
-            if (indexA > indexB) {
-                this.parentElement.insertBefore(Note.dragged, this);
-            } 
-            else {
-                this.parentElement.insertBefore(Note.dragged, this.nextElementSibling);
-            }
-        } 
-        else {
-            this.parentElement.insertBefore(Note.dragged, this);
+        // node.addEventListener('dblclick', this.onDblClick);      
+        // node.addEventListener('blur', this.onBlur);
+    }
+
+    id;
+
+    // init(elem) {
+    // }
+
+    template = (id, content) => {
+        let noteElement = document.createElement('div');
+        noteElement.className = 'note';
+        noteElement.setAttribute('draggable', 'true');
+        noteElement.dataset.noteId = id;
+        noteElement.textContent = content;
+
+        return noteElement;
+    }
+
+    render = (parentId, noteElement) => {
+        let parentColumn = document.querySelector('[data-column-id = "' + parentId + '"]')
+        parentColumn.querySelector('[data-notes]').append(noteElement);
+        return noteElement;
+    }
+
+    edit = (note = this.getNode()) => {
+        startEdit(note);
+    }
+
+    onDblClick(event) {
+        alert(event);
+        
+        event.target.removeAttribute('draggable');
+        event.target.closest('.column').removeAttribute('draggable');
+        this.edit();
+        return 1;
+    }
+
+    onBlur(event) {
+        event.target.removeAttribute('contenteditable');
+        event.target.setAttribute('draggable', 'true');
+        event.target.closest('.column').setAttribute('draggable', 'true');
+        if(isTextEmpty(event.target)) {
+            event.target.remove();
         }
     }
+
 }
 
+Note.nextId = '8';

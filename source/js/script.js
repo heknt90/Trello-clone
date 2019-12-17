@@ -1,31 +1,49 @@
 'use strict';
 
-document
-.querySelectorAll('.column')
-.forEach(Column.process);
+// По сути в логике приложения работают 2 сущности: Колонка и Запись.
+// И то и другое можно переставлять местами, переименовывать (редактировать)
+// Кроме того, записи можно перемещать из одной колонки в другую
+// Далее, нужно будет сделать перемещение курсора в конец текста при начале редактирования
+// Использовать автоматически редактирование при создании новой колонки (редактировать название колонки)
+// и при создании новой записи (редактировать текст записи)
 
-document
-    .querySelector('[data-action-addColumn]')
-    .addEventListener('click', event => {
+// Позже должен добавиться какой-то новый функционал 
+// - (иконка корзины, добавляющая возможность удаления элементов: колонок и (или) записей)
 
-        let columnElement = document.createElement('div');
-        columnElement.classList.add('column');
-        columnElement.setAttribute('draggable', 'true');
-        columnElement.dataset.columnId = Column.idCounter++;
+// // Композиция действий с колонками
+// document
+//     .querySelectorAll('.column')
+//     .forEach(Column.init);
 
-        columnElement.innerHTML = `<p class="column-header" contenteditable="true">В плане</p>
-                                    <div data-notes></div>
-                                    <p class="column-footer">
-                                        <span data-action-addNote class="action">+ Добавить карточку</span>
-                                    </p>`;
+// // Элемент добавления новой колонки
+// document
+//     .querySelector('[data-action-addColumn]')
+//     .addEventListener('click', event => {
 
-        document.querySelector('.columns').append(columnElement);
-        Column.process(columnElement);
-    });
-
-document
-    .querySelectorAll('.note')
-    .forEach(Note.process);
+//         Column.create();
+//     });
+// // Композиция обработчиков записи
+// document
+//     .querySelectorAll('.note')
+//     .forEach(Note.init);
 
 
 
+// const app = new TrelloApplication();
+// new TrelloApplication();
+// app.save();
+
+// localStorage.removeItem('my-trello-app');
+
+TrelloApplication.test();
+// TrelloApplication.clearRoot();
+// TrelloApplication.load();
+
+// new Note(666, 'Просто текст 0', 3);
+
+// new Note(666, 'Просто текст', 1);
+
+
+// new Note(777, 'Просто текст 1', 3);
+
+// console.log(note1);

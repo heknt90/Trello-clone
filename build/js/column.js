@@ -1,32 +1,47 @@
 const Column = {
-    idCounter: 4,
+    // Следующий ID для будующей колонки 
+    idCounter: 3,
+    // Свойство, в котором хранится информация, о перетаскиваемом в данным момент элементе (колонке)
     dragged: null,
+    
+    // Метод создания новой колонки
+    create() {
+        // При клике на элементе добавления новой колонки, создаем новую колонку
+        let columnElement = document.createElement('div');
+        columnElement.classList.add('column');
+        // Добавляем разрешение, что ее тоже можно будет перетаскивать
+        columnElement.setAttribute('draggable', 'true');
+        columnElement.dataset.columnId = Column.idCounter++;
 
-    process(columnElement) {
-        const spanAction_addNote = columnElement.querySelector('[data-action-addNote]')
-    
-        spanAction_addNote.addEventListener('click', event => {
-            let noteElement = document.createElement('div');
-            noteElement.classList.add('note');
-            noteElement.setAttribute('draggable', 'true');
-            noteElement.dataset.noteId = Note.idCounter++;
-    
-            columnElement.querySelector('[data-notes]').append(noteElement);
-            Note.process(noteElement);
-    
-            noteElement.setAttribute('contenteditable', 'true');
-            noteElement.focus();
+        // Шаблон содержимого колонки
+        columnElement.innerHTML = `<p class="column-header" contenteditable="true">В плане</p>
+                                    <div data-notes></div>
+                                    <p class="column-footer">
+                                        <span data-action-addNote class="action">+ Добавить карточку</span>
+                                    </p>`;
+
+        // Вставляем новую колонку в документ
+        document.querySelector('.columns').append(columnElement);
+
+        // Добавляем обработчики к новой колонке и ее элементам управления
+        Column.init(columnElement);
+    },
+
+    // Инициализация колонки
+    init(columnElement) {
+        // Вешаем обработчики редактирования заголовка колонки
+        const columnHeader = columnElement.querySelector('.column-header');
+
+        columnHeader.addEventListener('dblclick', Column.onHeaderDblClick);
+        columnHeader.addEventListener('blur', Column.onHeaderBlur);
+
+        // Элемент управляющий созданием новых записей внутри колонки (вешаем обработчик)
+        const noteCreatorElement = columnElement.querySelector('[data-action-addNote]');
+        noteCreatorElement.addEventListener('click', () => {
+            Note.create(columnElement);
         });
-    
-        let columnHeader = columnElement.querySelector('.column-header')
-        columnHeader.addEventListener('dblclick', event => {
-            columnHeader.setAttribute('contenteditable', 'true');
-            columnHeader.focus();
-        });
-        columnHeader.addEventListener('blur', event => {
-            columnHeader.removeAttribute('conteneditable');
-        });  
-    
+
+        // Вешаем события на инициируемую колонку
         columnElement.addEventListener('dragstart', Column.dragstart);
         columnElement.addEventListener('dragend', Column.dragend);
         columnElement.addEventListener('dragenter', Column.dragenter);
@@ -35,39 +50,93 @@ const Column = {
         columnElement.addEventListener('drop', Column.drop);
     },
     
+    onHeaderDblClick(event) {
+        event.target.setAttribute('contenteditable', 'true');
+        event.target.focus();
+    },
 
-    // dragstart(event) {
-    //     if(!Column.dragged) return;
-    //     Column.dragged = this;
-    //     this.classList.add('dragged');
-    //     console.log(Column.dragged);
-    // },
+    onHeaderBlur(event) {
+        event.target.removeAttribute('conteneditable');        
+    },
 
-    // dragend(event) {
-    //     Column.dragged = null;
-    //     this.classList.remove('dragged');
-    // },
+    dragstart() {
 
-    // dragenter (event) {
-    //     if (this === Column.dragged) return;
-    //     this.classList.add('under');
-    // },
+    },
 
-    dragover(event) {
-        // if(this === Column.dragged || !Column.dragged) return;
-        // console.log(this === Column.dragged);
+    dragend() {
+
+    },
+
+    dragenter() {
+
+    },
+
+    // Обработчик события наведения на колонку
+    // Происходит когда над данной колонкой находится перетаскиваемая запись
+    // или другая колонка
+    dragover() {
+        if (this === Column.dragged || !Column.dragged) { // Перепроверить условия!
+            return;
+        };
         event.preventDefault();
     },
 
-    dragleave (event) {
-        // if ( this.closest('.column') === Column.dragged || Column.dragged ) return;
+    // Обработчик события удаления drag от колонки
+    // Происходит в момент когда перетаскиваемая запись или другая колонка находилась над текушей
+    // и происходит утаскивание первой без вызова события drop на текушей
+    dragleave() {
+        if ( this.closest('.column') === Column.dragged || Column.dragged ) { // Перепроверить условия!
+            return;
+        };
         this.classList.remove('under');
     },
-    
-    drop(event) {
-        // if (this === Column.dragged || !Column.dragged) return;
+
+    // Обработчик события drop на колонке
+    // Происходит либо когда данную колонку бросают
+    drop() {
+        if (this === Column.dragged || !Column.dragged) { // Перепроверить условия!
+            return;
+        };
         if (Note.dragged) {
             return this.querySelector('[data-notes]').append(Note.dragged);
         }
     }
+    
+// // >>>>>>>>>>>>>>>>>
+
+// // Это недописанный код обработчиков перетаскивания колонок
+
+//     // dragstart(event) {
+//     //     if(!Column.dragged) return;
+//     //     Column.dragged = this;
+//     //     this.classList.add('dragged');
+//     //     console.log(Column.dragged);
+//     // },
+
+//     // dragend(event) {
+//     //     Column.dragged = null;
+//     //     this.classList.remove('dragged');
+//     // },
+
+//     // dragenter (event) {
+//     //     if (this === Column.dragged) return;
+//     //     this.classList.add('under');
+//     // },
+
+// // <<<<<<<<<<<<<<<<<
+
+//     // Честно говоря, мне не очень нравится такой подход к обработчикам. 
+//     // Так например обработчик draggable колонки обработавыет события перетаскивания записи и перетаскивания другой колонки
+//     // Мне кажется, что лучше было бы использовать делегирование
+    
+//     
 }
+
+
+// Элемент добавления новой колонки
+document
+    .querySelector('[data-action-addColumn]')
+    // Вешаем обработчик создания новой колонки
+    .addEventListener('click', () => {
+        Column.create();
+    });

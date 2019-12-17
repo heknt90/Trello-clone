@@ -1,73 +1,55 @@
-const Column = {
-    idCounter: 4,
-    dragged: null,
+'use strict';
 
-    process(columnElement) {
-        const spanAction_addNote = columnElement.querySelector('[data-action-addNote]')
-    
-        spanAction_addNote.addEventListener('click', event => {
-            let noteElement = document.createElement('div');
-            noteElement.classList.add('note');
-            noteElement.setAttribute('draggable', 'true');
-            noteElement.dataset.noteId = Note.idCounter++;
-    
-            columnElement.querySelector('[data-notes]').append(noteElement);
-            Note.process(noteElement);
-    
-            noteElement.setAttribute('contenteditable', 'true');
-            noteElement.focus();
-        });
-    
-        let columnHeader = columnElement.querySelector('.column-header')
-        columnHeader.addEventListener('dblclick', event => {
-            columnHeader.setAttribute('contenteditable', 'true');
-            columnHeader.focus();
-        });
-        columnHeader.addEventListener('blur', event => {
-            columnHeader.removeAttribute('conteneditable');
-        });  
-    
-        columnElement.addEventListener('dragstart', Column.dragstart);
-        columnElement.addEventListener('dragend', Column.dragend);
-        columnElement.addEventListener('dragenter', Column.dragenter);
-        columnElement.addEventListener('dragover', Column.dragover);
-        columnElement.addEventListener('dragleave', Column.dragleave);
-        columnElement.addEventListener('drop', Column.drop);
-    },
-    
+class Column {
+    constructor(id = Column.nextId++, title = 'Заголовок') {
+        this.id = id;
+        
+        let column = this.template(id, title);
+        this.render(column);
+                
+        this.onDblClick = this.onDblClick.bind(this);
+        // this.onBlur = this.onBlur.bind(this);
+        
+        let node = this.getNode();
+        this.init(node);
+        
+        return this;
+    }
 
-    // dragstart(event) {
-    //     if(!Column.dragged) return;
-    //     Column.dragged = this;
-    //     this.classList.add('dragged');
-    //     console.log(Column.dragged);
-    // },
+    id;
 
-    // dragend(event) {
-    //     Column.dragged = null;
-    //     this.classList.remove('dragged');
-    // },
+    init(elem) {
+        // elem.addEventListener('dblclick', this.onDblClick.bind(this));
 
-    // dragenter (event) {
-    //     if (this === Column.dragged) return;
-    //     this.classList.add('under');
-    // },
+    }
 
-    dragover(event) {
-        // if(this === Column.dragged || !Column.dragged) return;
-        // console.log(this === Column.dragged);
-        event.preventDefault();
-    },
+    render(columnElement) {
+        return document.querySelector('.columns').innerHTML += columnElement;
+    }
 
-    dragleave (event) {
-        // if ( this.closest('.column') === Column.dragged || Column.dragged ) return;
-        this.classList.remove('under');
-    },
+    template(id, title) {
+
+        let columnElement = `<div class="column" draggable="true" data-column-id="${id}">
+                                <p class="column-header">${title}</p>
+                                <div data-notes>
+                                    
+                                </div>
+                                <p class="column-footer">
+                                    <span data-action-addNote class="action">+ Добавить карточку</span>
+                                </p>
+                            </div>`
+
+        return columnElement;
+    }
     
-    drop(event) {
-        // if (this === Column.dragged || !Column.dragged) return;
-        if (Note.dragged) {
-            return this.querySelector('[data-notes]').append(Note.dragged);
-        }
+    getNode = (id = this.id) => {
+        return document.querySelector('[data-column-id="' + id + '"]');
+    }     
+    
+    onDblClick(event) {
+        alert(event);
+        
     }
 }
+
+Column.nextId = '8';
